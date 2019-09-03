@@ -1,0 +1,43 @@
+{
+  "name": "ovoid",
+  "version": "1.0.0",
+  "description": "Un-Official ovoid API Wrapper for NodeJS",
+  "main": "src/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apriady/ovoid-nodejs.git"
+  },
+  "keywords": [
+    "ovo",
+    "ovoid",
+    "payment-gateway",
+    "indonesia"
+  ],
+  "author": "Achmad Apriady <achmad.apriady@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/apriady/ovoid-nodejs/issues"
+  },
+  "homepage": "https://github.com/apriady/ovoid-nodejs#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.0",
+    "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "uuid": "^3.3.3"
+  }
+}
