@@ -19,6 +19,17 @@ const ovo = {
     };
 
     return rpOvo(options);
+  },
+  get: (uri, qs, headers) => {
+    const options = {
+      method: 'GET',
+      uri,
+      qs,
+      headers,
+      json: true
+    };
+
+    return rpOvo(options);
   }
 };
 
