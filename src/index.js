@@ -86,7 +86,7 @@ class OVOID {
     return ovo.post('v1.1/api/auth/customer/isOVO', data, this._aditionalHeader())
   }
 
-  transferOvo(to_mobilePhone, amount, message = "") {
+  async transferOvo(to_mobilePhone, amount, message = "") {
     if (amount < 10000) {
         throw new Error('Minimal 10.000');
     }
@@ -94,11 +94,9 @@ class OVOID {
       'amount': amount,
       'message': message === "" ? 'Sent from ovoid-nodejs' : message,
       'to': to_mobilePhone,
-      'trxId': this._generateTrxId(amount, TRANSFER_OVO)
+      'trxId': await this._generateTrxId(amount, TRANSFER_OVO)
     };
-    return ovo.post('v1.0/api/customers/transfer', data, this._aditionalHeader()).catch(err => {
-      ovoidError(err)
-    })
+    return ovo.post('v1.0/api/customers/transfer', data, this._aditionalHeader())
   }
 
   getRefBank() {
@@ -116,7 +114,7 @@ class OVOID {
     return ovo.post('transfer/inquiry', data, this._aditionalHeader())
   }
 
-  transferBank(accountName, accountNo, accountNoDestination, amount, bankCode, bankName, message = "", notes = "") {
+  async transferBank(accountName, accountNo, accountNoDestination, amount, bankCode, bankName, message = "", notes = "") {
     if (amount < 10000) {
       throw new Error('Minimal 10.000');
     }
@@ -129,7 +127,7 @@ class OVOID {
       'bankName': bankName,
       'message': message === "" ? 'Sent from ovoid-nodejs' : message,
       'notes': notes === "" ? 'Sent from ovoid-nodejs' : notes,
-      'transactionId': this._generateTrxId(amount, TRANSFER_BANK)
+      'transactionId': await this._generateTrxId(amount, TRANSFER_BANK)
     };
     return ovo.post('transfer/direct', data, this._aditionalHeader())
   }
@@ -206,7 +204,7 @@ class OVOID {
       'actionMark': actionMark,
       'amount': amount
     };
-    return ovo.post('v1.0/api/auth/customer/genTrxId', data, this._aditionalHeader());
+    return ovo.post('v1.0/api/auth/customer/genTrxId', data, this._aditionalHeader()).then(({trxId}) => trxId);
   }
 }
 
