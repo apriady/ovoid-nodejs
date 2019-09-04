@@ -71,6 +71,20 @@ let isOVO = await ovoid.isOVO(nominal, 'nomortujuan');
 let transferOvo = await ovoid.transferOvo('nomortujuan', nominal, 'catatan');
 ```
 
+#### Transfer ke rekening bank
+##### Cek kode bank
+```js
+let getRefBank = await ovoid.getRefBank();
+```
+##### Cek tujuan transfer (transfer inquiry)
+```js
+let transferInquiry = await ovoid.transferInquiry(no_rekening, nominal, 'kodebank', 'nama bank', 'catatan');
+```
+##### Transfer ke rekening tujuan
+```js
+let transferBank = await ovoid.transferBank('nama penerima', 'nomor_akun_ovo', 'nomor_rekening_tujuan', nominal, 'kodebank', 'nama bank', 'pesan', 'catatan');
+```
+
 
 
 

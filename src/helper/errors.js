@@ -86,6 +86,7 @@ class TransactionFailed extends Error {
 
 module.exports = {
   ovoidError: (err) => {
+    if(err.error.code === 422) throw new TransactionFailed(err.error.message)
     if(err.error.code === 1000) throw new InvalidParameters(err.error.message)
     if(err.error.code === 1021) throw new InvalidPIN(err.error.message)
     if(err.error.code === 1053) throw new NotRegistered(err.error.message)
@@ -94,6 +95,7 @@ module.exports = {
     if(err.error.code == 10000022) throw new NotFound(err.error.message)
     if(err.error.code == 10010021) throw new TransactionFailed(err.error.message)
     if(err.error.message === 'Data Not Found!') throw new NotFound(err.error.message)
+    if(err.error.message.includes('Not Allowed To Do IBFT Transfer')) throw new TransactionFailed(err.error.message)
     throw new Error(err)
   }
 }
