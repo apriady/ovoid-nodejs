@@ -1,7 +1,6 @@
-const { APP_ID, APP_VERSION, OS_NAME, OS_VERSION, MAC_ADDRESS } = require('../config/base')
-const { ovo } = require('./helper/request')
+const { APP_ID, APP_VERSION, OS_NAME, OS_VERSION, MAC_ADDRESS, TRANSFER_OVO, TRANSFER_BANK } = require('../config/base')
+const { ovo, ovoAws } = require('./helper/request')
 const uuid = require('uuid/v4')
-const { ovoidError } = require('./helper/errors')
 
 class OVOID {
   constructor(authToken) {
@@ -21,9 +20,7 @@ class OVOID {
     };
     return ovo.post('v2.0/api/auth/customer/login2FA', data, this.headers).then(data => {
       return data.refId
-    }).catch(err => {
-      ovoidError(err)
-    });
+    })
   }
 
   login2FAVerify(refId, verificationCode, mobilePhone) {
@@ -38,56 +35,38 @@ class OVOID {
       'refId': refId,
       'verificationCode': verificationCode
     };
-    return ovo.post('v2.0/api/auth/customer/login2FA/verify', data, this.headers).catch(err => {
-      ovoidError(err)
-    });
+    return ovo.post('v2.0/api/auth/customer/login2FA/verify', data, this.headers)
   }
 
-  loginSecurityCode(securityCode, updateAccessToken)
-  {
+  loginSecurityCode(securityCode, updateAccessToken) {
     let data = {
       'deviceUnixtime': Math.floor(new Date() / 1000),
       'securityCode': securityCode,
       'updateAccessToken': updateAccessToken,
       'message': ''
     };
-    return ovo.post('v2.0/api/auth/customer/loginSecurityCode/verify', data, this.headers).catch(err => {
-      ovoidError(err)
-    });
+    return ovo.post('v2.0/api/auth/customer/loginSecurityCode/verify', data, this.headers)
   }
 
-  getBalance()
-  {
+  getBalance() {
     return ovo.get('v1.0/api/front/', null, this._aditionalHeader()).then(resp => {
       return resp.balance
-    }).catch(err => {
-      ovoidError(err)
-    });
+    })
   }
 
-  getBudget()
-  {
-    return ovo.get('v1.0/budget/detail', null, this._aditionalHeader()).catch(err => {
-      ovoidError(err)
-    });
+  getBudget() {
+    return ovo.get('v1.0/budget/detail', null, this._aditionalHeader())
   }
   
-  getUnreadHistory()
-  {
-    return ovo.get('v1.0/notification/status/count/UNREAD', null, this._aditionalHeader()).catch(err => {
-      ovoidError(err)
-    });
+  getUnreadHistory() {
+    return ovo.get('v1.0/notification/status/count/UNREAD', null, this._aditionalHeader())
   }
   
-  getAllNotification()
-  {
-    return ovo.get('v1.0/notification/status/all', null, this._aditionalHeader()).catch(err => {
-      ovoidError(err)
-    });
+  getAllNotification() {
+    return ovo.get('v1.0/notification/status/all', null, this._aditionalHeader())
   }
 
-  getWalletTransaction(page, limit = 10)
-  {
+  getWalletTransaction(page, limit = 10) {
     return ovo.get(
       'wallet/v2/transaction',
       {
@@ -96,20 +75,123 @@ class OVOID {
         productType: '001'
       },
       this._aditionalHeader()
-    ).catch(err => {
-      ovoidError(err)
-    });
+    )
   }
 
-  isOVO(totalAmount, mobilePhone)
-  {
+  isOVO(totalAmount, mobilePhone) {
     let data = {
       'totalAmount': totalAmount,
       'mobile': mobilePhone
     };
-    return ovo.post('v1.1/api/auth/customer/isOVO', data, this._aditionalHeader()).catch(err => {
+    return ovo.post('v1.1/api/auth/customer/isOVO', data, this._aditionalHeader())
+  }
+
+  transferOvo(to_mobilePhone, amount, message = "") {
+    if (amount < 10000) {
+        throw new Error('Minimal 10.000');
+    }
+    let data = {
+      'amount': amount,
+      'message': message === "" ? 'Sent from ovoid-nodejs' : message,
+      'to': to_mobilePhone,
+      'trxId': this._generateTrxId(amount, TRANSFER_OVO)
+    };
+    return ovo.post('v1.0/api/customers/transfer', data, this._aditionalHeader()).catch(err => {
       ovoidError(err)
-    });
+    })
+  }
+
+  getRefBank() {
+    return ovo.get('v1.0/reference/master/ref_bank', null, this._aditionalHeader())
+  }
+
+  transferInquiry(accountNo, amount, bankCode, bankName, message = "") {
+    let data = {
+      'accountNo': accountNo,
+      'amount': amount,
+      'bankCode': bankCode,
+      'bankName': bankName,
+      'message': message
+    };
+    return ovo.post('transfer/inquiry', data, this._aditionalHeader())
+  }
+
+  transferBank(accountName, accountNo, accountNoDestination, amount, bankCode, bankName, message = "", notes = "") {
+    if (amount < 10000) {
+      throw new Error('Minimal 10.000');
+    }
+    let data = {
+      'accountName': accountName,
+      'accountNo': accountNo,
+      'accountNoDestination': accountNoDestination,
+      'amount': amount,
+      'bankCode': bankCode,
+      'bankName': bankName,
+      'message': message === "" ? 'Sent from ovoid-nodejs' : message,
+      'notes': notes === "" ? 'Sent from ovoid-nodejs' : notes,
+      'transactionId': this._generateTrxId(amount, TRANSFER_BANK)
+    };
+    return ovo.post('transfer/direct', data, this._aditionalHeader())
+  }
+
+  getBillers() {
+      
+    return ovoAws.get('gpdm/ovo/ID/v2/billpay/get-billers', {categoryID:'5C6'}, this._aditionalHeader());
+  }
+  
+  getDenominationByProductId(product_id)
+  { 
+    return ovoAws.get('gpdm/ovo/ID/v1/billpay/get-denominations/${product_id}', null, this._aditionalHeader());
+  }
+  
+  billerInquiry(billerId, customerId, denomId, productId)
+  {
+    let data = {
+      'biller_id': String(billerId),
+      'customer_id': customerId,
+      'denomination_id': denomId,
+      'payment_method': [
+        '001'
+      ],
+      'phone_number': customerId,
+      'product_id': String(productId),
+      'period': 0
+    };
+    return ovoAws.post('gpdm/ovo/ID/v1/billpay/inquiry', data, this._aditionalHeader());
+  }
+  
+  
+  customerUnlock(securityCode)
+  {
+      let data = {
+        'appVersion': APP_VERSION,
+        'securityCode': securityCode
+      };
+      return ovo.post('v1.0/api/auth/customer/unlock', data, this._aditionalHeader());
+  }
+  
+  
+  pay(billerId, customerId, order_id, productId)
+  {
+    let data = {
+      'biller_id'     : billerId,
+      'customer_id'   : customerId,
+      'order_id'      : order_id,
+      'payment_method': [
+        '001'
+      ],
+      'phone_number': customerId,
+      'product_id'  : productId
+    };
+    return ovoAws.post('gpdm/ovo/ID/v1/billpay/pay', data, this._aditionalHeader());
+  }
+  
+  payCheckStatus(orderId)
+  {
+    let data = {
+      'order_reference': orderId
+    };
+    return ovoAws.post('gpdm/ovo/ID/v1/billpay/checkstatus', data, this._aditionalHeader());
   }
     
   _aditionalHeader() {
@@ -117,6 +199,14 @@ class OVOID {
       'Authorization': this.authToken,
       ...this.headers
     }
+  }
+
+  _generateTrxId(amount, actionMark) {
+    let data = {
+      'actionMark': actionMark,
+      'amount': amount
+    };
+    return ovo.post('v1.0/api/auth/customer/genTrxId', data, this._aditionalHeader());
   }
 }
 

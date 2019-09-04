@@ -5,15 +5,15 @@ Repository berikut ini merupakan porting dari [ovoid](https://github.com/lintang
 ### Method
 
 - [x] login2FA
-- [ ] login2FAVerify
-- [ ] loginSecurityCode
-- [ ] getBudget
-- [ ] balanceModel
+- [x] login2FAVerify
+- [x] loginSecurityCode
+- [x] getBalance
+- [x] getBudget
 - [ ] logout
-- [ ] unreadHistory
-- [ ] getWalletTransaction
-- [ ] generateTrxId
-- [ ] transferOvo
+- [x] unreadHistory
+- [x] getWalletTransaction
+- [x] generateTrxId
+- [x] transferOvo
 
 ### Instalasi
 
