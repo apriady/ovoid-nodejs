@@ -48,8 +48,10 @@ class OVOID {
     return ovo.post('v2.0/api/auth/customer/loginSecurityCode/verify', data, this.headers)
   }
 
-  getBalance() {
+  getBalance(type) {
     return ovo.get('v1.0/api/front/', null, this._aditionalHeader()).then(resp => {
+      if(type === 'cash') return resp.balance['001']
+      if(type === 'point') return resp.balance['600']
       return resp.balance
     })
   }
