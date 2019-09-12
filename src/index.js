@@ -193,6 +193,11 @@ class OVOID {
     };
     return ovoAws.post('gpdm/ovo/ID/v1/billpay/checkstatus', data, this._aditionalHeader());
   }
+
+  logout()
+  {
+    return ovo.get('v1.0/api/auth/customer/logout', null, this._aditionalHeader());
+  }
     
   _aditionalHeader() {
     return {
