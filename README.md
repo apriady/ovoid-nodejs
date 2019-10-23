@@ -8,7 +8,7 @@ Repository berikut ini merupakan porting dari [ovoid](https://github.com/lintang
 - [x] loginSecurityCode
 - [x] getBalance
 - [x] getBudget
-- [ ] logout
+- [x] logout
 - [x] unreadHistory
 - [x] getWalletTransaction
 - [x] generateTrxId
@@ -85,13 +85,18 @@ let transferInquiry = await ovoid.transferInquiry(no_rekening, nominal, 'kodeban
 let transferBank = await ovoid.transferBank('nama penerima', 'nomor_akun_ovo', 'nomor_rekening_tujuan', nominal, 'kodebank', 'nama bank', 'pesan', 'catatan');
 ```
 
+#### Logout
+```js
+ovoid.logout();
+```
 
 
 
-## License
+
+### License
 
 [MIT](https://github.com/apriady/nodejs-bca-scraper/blob/master/LICENSE)
 
-## Author
+### Author
 
 [Achmad Apriady](mailto:achmad.apriady@gmail.com)
