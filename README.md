@@ -34,11 +34,11 @@ let accessToken = await ovoid.login2FAVerify(refId,'OTP','nomorhandphone');
 ```
 ##### Langkah 3
 ```js
-let authToken = await ovoid.loginSecurityCode('PINOVO', accesToken);
+let authToken = await ovoid.loginSecurityCode('PINOVO', accesToken.updateAccessToken);
 ```
 ##### Untuk mengakses resource selanjutnya
 ```js
-ovoid = new OVOID(authToken)
+ovoid = new OVOID(authToken.token)
 ```
 
 #### Mendapatkan jumlah notifikasi yang belum terbaca
