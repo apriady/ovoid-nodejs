@@ -1,5 +1,5 @@
 const APP_ID = 'C7UMRSMFRZ46D9GW9IK7';
-const APP_VERSION = '3.2.0';
+const APP_VERSION = '3.9.0';
 const OS_NAME = 'Android';
 const OS_VERSION = '8.1.0';
 const MAC_ADDRESS = 'd8:8e:35:4d:bd:88';
