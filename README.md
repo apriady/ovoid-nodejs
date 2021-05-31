@@ -34,7 +34,7 @@ let accessToken = await ovoid.login2FAVerify(refId,'OTP','nomorhandphone');
 ```
 ##### Langkah 3
 ```js
-let authToken = await ovoid.loginSecurityCode('PINOVO', accesToken.updateAccessToken);
+let authToken = await ovoid.loginSecurityCode('PINOVO', accessToken.updateAccessToken);
 ```
 ##### Untuk mengakses resource selanjutnya
 ```js
