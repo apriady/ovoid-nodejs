@@ -2,7 +2,7 @@
 
 Repository berikut ini merupakan porting dari [ovoid](https://github.com/lintangtimur/ovoid/) untuk NodeJS
 
-  
+![enter image description here](https://raw.githubusercontent.com/notme1001/ovoid-nodejs/master/ovo-unofficial.png)
 
 ### Method
 
