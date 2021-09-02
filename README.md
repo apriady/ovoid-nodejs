@@ -61,8 +61,8 @@ let refId =  await ovoid.login2FA('nomorhandphone');
 > *Response:*
 ```json
 {
-  otp_refId: 'a82eddf0-1eee-400b-b8aa-xxxxxx',
-  device_id: '707503a4-9314-xxxx-a931-bf575c08b23b'
+  "otp_refId": "a82eddf0-1eee-400b-b8aa-xxxxxx",
+  "device_id": "707503a4-9314-xxxx-a931-bf575c08b23b"
 }
 ```
 
@@ -77,10 +77,10 @@ let accessToken =  await ovoid.login2FAVerify(refId.otp_refId,'OTP','nomorhandph
 > *Response*
 ```json
 {
-      otp_ref_id: 'a82eddf0-1eee-400b-b8aa-1cce98fe10a8',
-      type: 'LOGIN',
-      expires_at: 1630598216,
-      otp_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlaGFzaCI6IlptWmxZekJrTnpBeU5ESXpOR00zTjJGbU1Ea3daakF6TXpJMk1qTXdNV1UiLCJyYW5kb20iOiJNamt3TmpNM056STQiLCJ2ZXJzaW9uIjoxfQ.xxxxxxxxxxxxxx'
+      "otp_ref_id": "a82eddf0-1eee-400b-b8aa-1cce98fe10a8",
+      "type": "LOGIN",
+      "expires_at": "1630598216",
+      "otp_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlaGFzaCI6IlptWmxZekJrTnpBeU5ESXpOR00zTjJGbU1Ea3daakF6TXpJMk1qTXdNV1UiLCJyYW5kb20iOiJNamt3TmpNM056STQiLCJ2ZXJzaW9uIjoxfQ.xxxxxxxxxxxxxx"
 }
 ```
 
