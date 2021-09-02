@@ -1,55 +1,75 @@
-const { APP_ID, APP_VERSION, OS_NAME, OS_VERSION, MAC_ADDRESS, TRANSFER_OVO, TRANSFER_BANK } = require('../config/base')
-const { ovo, ovoAws } = require('./helper/request')
+const { APP_VERSION, OS_NAME, OS_VERSION, CLIENT_ID, USER_AGENT, TRANSFER_OVO, TRANSFER_BANK } = require('../config/base')
+const { ovo, ovoAws, ovoAuth } = require('./helper/request')
+const { encryptRSA } = require('./helper/encrypt')
 const uuid = require('uuid/v4')
 
 class OVOID {
   constructor(authToken) {
     this.authToken = authToken
     this.headers = {
-      'app-id': APP_ID,
       'App-Version': APP_VERSION,
-      'OS': OS_NAME
+      'User-Agent': USER_AGENT,
+      'OS': OS_NAME,
+      'OS-Version': OS_VERSION,
+      'client-id': CLIENT_ID,
     }
 
   }
 
   login2FA(mobilePhone) {
+    let device_id = uuid()
     let data = {
-        'deviceId': uuid(),
-        'mobile': mobilePhone
-    };
-    return ovo.post('v2.0/api/auth/customer/login2FA', data, this.headers).then(data => {
-      return data.refId
+      "channel_code": "ovo_android",
+      "device_id": device_id,
+      "msisdn": mobilePhone,
+      "otp": {
+        "locale": "ID",
+        "sms_hash": "abc"
+      }
+    }
+
+    return ovoAuth.post('v3/user/accounts/otp', data, this.headers).then(data => {
+      return {
+        otp_refId: data?.data?.otp?.otp_ref_id,
+        device_id: device_id
+      }
     })
   }
 
-  login2FAVerify(refId, verificationCode, mobilePhone) {
+  login2FAVerify(refId, verificationCode, mobilePhone, device_id) {
     let data = {
-      'appVersion': APP_VERSION,
-      'deviceId': uuid(),
-      'macAddress': MAC_ADDRESS,
-      'mobile': mobilePhone,
-      'osName': OS_NAME,
-      'osVersion': OS_VERSION,
-      'pushNotificationId': 'FCM|f4OXYs_ZhuM:APA91bGde-ie2YBhmbALKPq94WjYex8gQDU2NMwJn_w9jYZx0emAFRGKHD2NojY6yh8ykpkcciPQpS0CBma-MxTEjaet-5I3T8u_YFWiKgyWoH7pHk7MXChBCBRwGRjMKIPdi3h0p2z7',
-      'refId': refId,
-      'verificationCode': verificationCode
+      "channel_code": "ovo_android",
+      "device_id": device_id,
+      "msisdn": mobilePhone,
+      "otp": {
+        "otp": verificationCode,
+        "otp_ref_id": refId,
+        "type": "LOGIN"
+      }
     };
-    return ovo.post('v2.0/api/auth/customer/login2FA/verify', data, this.headers)
+    return ovoAuth.post('v3/user/accounts/otp/validation', data, this.headers).then(data => data?.data?.otp)
   }
 
-  loginSecurityCode(securityCode, updateAccessToken) {
+  async loginSecurityCode(securityCode, otp_token, mobilePhone, otpRefId, device_id) {
     let data = {
-      'deviceUnixtime': Math.floor(new Date() / 1000),
-      'securityCode': securityCode,
-      'updateAccessToken': updateAccessToken,
-      'message': ''
+        "channel_code":"ovo_android",
+        "credentials":{
+          "otp_token": otp_token,
+          "password":{
+              "format":"rsa",
+              "value": await encryptRSA(securityCode, device_id, mobilePhone, otpRefId)
+          }
+        },
+        "device_id": device_id,
+        "msisdn": mobilePhone,
+        "push_notification_id":"fs-DYcGaRbKERLhF4hkQ92:APA91bEjjUFzzFvadIKtdrrqsyrGH26xLRR5-Oyym2l9Ybv0O1cnvqA14ghuTbXz0ogazN-Kw6iGxW2klakANBaVXoFCLrT4hWJJ5FCGOz2o5bGE7RX6XpxndNkcxnqpWat449vBvYSa"
     };
-    return ovo.post('v2.0/api/auth/customer/loginSecurityCode/verify', data, this.headers)
+    
+    return ovoAuth.post('v3/user/accounts/login', data, this.headers).then(data => data?.data?.auth)
   }
 
   getBalance(type) {
-    return ovo.get('v1.0/api/front/', null, this._aditionalHeader()).then(resp => {
+    return ovo.get('v3.0/api/front/', null, this._aditionalHeader()).then(resp => {
       if(type === 'cash') return resp.balance['001']
       if(type === 'point') return resp.balance['600']
       return resp.balance
@@ -141,7 +161,7 @@ class OVOID {
   
   getDenominationByProductId(product_id)
   { 
-    return ovoAws.get('gpdm/ovo/ID/v1/billpay/get-denominations/${product_id}', null, this._aditionalHeader());
+    return ovoAws.get(`gpdm/ovo/ID/v1/billpay/get-denominations/${product_id}`, null, this._aditionalHeader());
   }
   
   billerInquiry(billerId, customerId, denomId, productId)

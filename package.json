@@ -36,6 +36,8 @@
     "prettier": "^1.18.2"
   },
   "dependencies": {
+    "constants": "0.0.2",
+    "crypto": "^1.0.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "uuid": "^3.3.3"
