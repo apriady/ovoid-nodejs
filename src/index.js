@@ -68,6 +68,10 @@ class OVOID {
     return ovoAuth.post('v3/user/accounts/login', data, this.headers).then(data => data?.data?.auth)
   }
 
+  getProfile() {
+    return ovo.get('v3.0/api/front/', null, this._aditionalHeader()).then((resp) => resp.profile)
+  }
+
   getBalance(type) {
     return ovo.get('v3.0/api/front/', null, this._aditionalHeader()).then(resp => {
       if(type === 'cash') return resp.balance['001']

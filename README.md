@@ -124,6 +124,17 @@ let notif =  await ovoid.getAllNotification();
 
 ```
 
+
+#### Info profile pengguna
+
+Mendapatkan info profile ovo
+
+```js
+
+let profile =  await ovoid.getProfile();
+
+```
+
   
 
 #### Mendapatkan balance
