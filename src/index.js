@@ -16,8 +16,8 @@ class OVOID {
 
   }
 
-  login2FA(mobilePhone) {
-    let device_id = uuid()
+  login2FA(mobilePhone, deviceId) {
+    let device_id = deviceId || uuid()
     let data = {
       "channel_code": "ovo_android",
       "device_id": device_id,
