@@ -1,6 +1,5 @@
 const rp = require('request-promise-native');
 const { BASE_ENDPOINT, AWS, AUTH_ENDPOINT } = require('../../config/base');
-const { ovoidError } = require('./errors')
 
 const rpOvo = rp.defaults({
   baseUrl: BASE_ENDPOINT
@@ -23,7 +22,7 @@ const ovoAuth = {
     };
 
     return rpOvoAuth(options).catch(err => {
-      ovoidError(err)
+      throw err.error
     });
   },
   get: (uri, qs, headers) => {
@@ -36,7 +35,7 @@ const ovoAuth = {
     };
 
     return rpOvoAuth(options).catch(err => {
-      ovoidError(err)
+      throw err.error
     });
   }
 };
@@ -52,7 +51,7 @@ const ovo = {
     };
 
     return rpOvo(options).catch(err => {
-      ovoidError(err)
+      throw err.error
     });
   },
   get: (uri, qs, headers) => {
@@ -65,7 +64,7 @@ const ovo = {
     };
 
     return rpOvo(options).catch(err => {
-      ovoidError(err)
+      throw err.error
     });
   }
 };
@@ -81,7 +80,7 @@ const ovoAws = {
     };
 
     return rpOvoAws(options).catch(err => {
-      ovoidError(err)
+      throw err.error
     });
   },
   get: (uri, qs, headers) => {
@@ -94,7 +93,7 @@ const ovoAws = {
     };
 
     return rpOvoAws(options).catch(err => {
-      ovoidError(err)
+      throw err.error
     });
   }
 };
