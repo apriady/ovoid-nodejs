@@ -50,7 +50,7 @@ class OVOID {
     return ovoAuth.post('v3/user/accounts/otp/validation', data, this.headers).then(data => data?.data?.otp)
   }
 
-  async loginSecurityCode(securityCode, otp_token, mobilePhone, otpRefId, device_id) {
+  async loginSecurityCode(securityCode, otp_token, mobilePhone, otpRefId, device_id, pushId = 'XXXXXXXXXX') {
     let data = {
         "channel_code":"ovo_android",
         "credentials":{
@@ -62,7 +62,7 @@ class OVOID {
         },
         "device_id": device_id,
         "msisdn": mobilePhone,
-        "push_notification_id":"fs-DYcGaRbKERLhF4hkQ92:APA91bEjjUFzzFvadIKtdrrqsyrGH26xLRR5-Oyym2l9Ybv0O1cnvqA14ghuTbXz0ogazN-Kw6iGxW2klakANBaVXoFCLrT4hWJJ5FCGOz2o5bGE7RX6XpxndNkcxnqpWat449vBvYSa"
+        "push_notification_id": pushId
     };
     
     return ovoAuth.post('v3/user/accounts/login', data, this.headers).then(data => data?.data?.auth)
