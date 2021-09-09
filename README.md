@@ -58,6 +58,13 @@ let refId =  await ovoid.login2FA('nomorhandphone');
 
 ```
 
+Jika ingin menggunakan deviceId yg sudah pernah dipakai
+```js
+
+let refId =  await ovoid.login2FA('nomorhandphone', 'deviceId');
+
+```
+
 > *Response:*
 ```json
 {
@@ -88,9 +95,17 @@ let accessToken =  await ovoid.login2FAVerify(refId.otp_refId,'OTP','nomorhandph
 
 ```js
 
-let authToken =  await ovoid.loginSecurityCode('PINOVO', accessToken.otp_ref_id, 'nomorhandphone', refId.otp_refId, refId.device_id);
+let authToken =  await ovoid.loginSecurityCode('PINOVO', accessToken.otp_token, 'nomorhandphone', refId.otp_refId, refId.device_id);
 
 ```
+
+Jika ingin menggunakan FCM token yg sudah ada
+```js
+
+let authToken =  await ovoid.loginSecurityCode('PINOVO', accessToken.otp_token, 'nomorhandphone', refId.otp_refId, refId.device_id, 'FCMToken');
+
+```
+
 
 ##### Untuk mengakses resource selanjutnya
 
