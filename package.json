@@ -1,6 +1,6 @@
 {
   "name": "ovoid",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Un-Official ovoid API Wrapper for NodeJS",
   "main": "dist",
   "directories": {
