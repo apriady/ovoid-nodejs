@@ -79,7 +79,7 @@ class OVOID {
       return null;
     });
   }
-
+  
   getBudget() {
     return ovo.get('v1.0/budget/detail', null, this._aditionalHeader())
   }
