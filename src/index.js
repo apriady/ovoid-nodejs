@@ -75,7 +75,7 @@ class OVOID {
   getBalance(type) {
     return ovo.get('wallet/inquiry', null, this._aditionalHeader()).then(resp => {
       if (type === 'cash') return resp.data['001'];
-      if (type === 'point') return resp.data['600'].card_balance;
+      if (type === 'point') return resp.data['600'];
       return null;
     });
   }
