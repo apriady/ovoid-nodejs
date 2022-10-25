@@ -16,7 +16,7 @@ jobs:
       - name: Install Package
         run: npm install
       - name: Build
-        run: npm build
+        run: npm run build
       - name: Remove src Directory
         run: rm -rf src
       - name: Publish to NPM
