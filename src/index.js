@@ -93,8 +93,8 @@ class OVOID {
   }
 
   getWalletTransaction(page, limit = 10) {
-    return ovo.get(
-      'wallet/v2/transaction',
+    return ovoAuth.get(
+      'payment/orders/v1/list',
       {
         page,
         limit,
