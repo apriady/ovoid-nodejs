@@ -22,7 +22,7 @@ const ovoAuth = {
     };
 
     return rpOvoAuth(options).catch(err => {
-      throw err.error
+      return err.error
     });
   },
   get: (uri, qs, headers) => {
@@ -35,7 +35,7 @@ const ovoAuth = {
     };
 
     return rpOvoAuth(options).catch(err => {
-      throw err.error
+      return err.error
     });
   }
 };
@@ -51,7 +51,7 @@ const ovo = {
     };
 
     return rpOvo(options).catch(err => {
-      throw err.error
+      return err.error
     });
   },
   get: (uri, qs, headers) => {
@@ -64,7 +64,7 @@ const ovo = {
     };
 
     return rpOvo(options).catch(err => {
-      throw err.error
+      return err.error
     });
   }
 };
@@ -80,7 +80,7 @@ const ovoAws = {
     };
 
     return rpOvoAws(options).catch(err => {
-      throw err.error
+      return err.error
     });
   },
   get: (uri, qs, headers) => {
@@ -93,7 +93,7 @@ const ovoAws = {
     };
 
     return rpOvoAws(options).catch(err => {
-      throw err.error
+      return err.error
     });
   }
 };

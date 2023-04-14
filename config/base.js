@@ -1,8 +1,8 @@
 const APP_ID = 'C7UMRSMFRZ46D9GW9IK7';
-const APP_VERSION = '3.32.1';
-const USER_AGENT = 'OVO/17256 CFNetwork/1240.0.4 Darwin/20.5.0';
+const APP_VERSION = '3.80.0';
+const USER_AGENT = 'okhttp/4.9.3';
 const OS_NAME = 'Android';
-const OS_VERSION = '7.1.1';
+const OS_VERSION = '13';
 const CLIENT_ID = 'ovo_android';
 const MAC_ADDRESS = 'd8:8e:35:4d:bd:88';
 const BASE_ENDPOINT = 'https://api.ovo.id/';
