@@ -2,16 +2,19 @@ const { APP_VERSION, OS_NAME, OS_VERSION, CLIENT_ID, USER_AGENT, TRANSFER_OVO, T
 const { ovo, ovoAws, ovoAuth } = require('./helper/request')
 const { encryptRSA } = require('./helper/encrypt')
 const uuid = require('uuid/v4')
+const crypto = require('crypto')
 
 class OVOID {
-  constructor(authToken) {
+  constructor(authToken,deviceId) {
     this.authToken = authToken
+    this.devId = deviceId
     this.headers = {
       'App-Version': APP_VERSION,
       'User-Agent': USER_AGENT,
       'OS': OS_NAME,
       'OS-Version': OS_VERSION,
       'client-id': CLIENT_ID,
+      'device_id': this.devId,
     }
 
   }
@@ -112,15 +115,39 @@ class OVOID {
     return ovo.post('v1.1/api/auth/customer/isOVO', data, this._aditionalHeader())
   }
 
-  async transferOvo(to_mobilePhone, amount, message = "") {
-    if (amount < 10000) {
-        throw new Error('Minimal 10.000');
+  generateHash(amount, trxId)
+  {
+    let array = [trxId, amount, this.devId];
+    let string = array.join("||");
+    const shasum = crypto.createHash('sha1').update(string).digest('hex')
+    return shasum;
+  }
+
+  customerUnlock(amount, trxId, securityCode)
+  {
+      let data = {
+        'trxId': trxId,
+        'securityCode': securityCode,
+        'appVersion': APP_VERSION,
+        'signature': this.generateHash(amount, trxId),
+      };
+      return ovo.post('/v1.0/api/auth/customer/unlockAndValidateTrxId', data, this._aditionalHeader());
+  }
+
+  async transferOvo(to_mobilePhone, amount, message = "", securityCode) {
+    // if (amount < 10000) {
+    //     throw new Error('Minimal 10.000');
+    // }
+    let trxId = await this._generateTrxId(amount, TRANSFER_OVO);
+    let unlock = await this.customerUnlock(amount, trxId, securityCode);
+    if (!unlock.isAuthorized){
+      return 'Security Code Salah';
     }
     let data = {
       'amount': amount,
       'message': message === "" ? 'Sent from ovoid-nodejs' : message,
       'to': to_mobilePhone,
-      'trxId': await this._generateTrxId(amount, TRANSFER_OVO)
+      'trxId': trxId
     };
     return ovo.post('v1.0/api/customers/transfer', data, this._aditionalHeader())
   }
@@ -182,18 +209,7 @@ class OVOID {
       'period': 0
     };
     return ovoAws.post('gpdm/ovo/ID/v1/billpay/inquiry', data, this._aditionalHeader());
-  }
-  
-  
-  customerUnlock(securityCode)
-  {
-      let data = {
-        'appVersion': APP_VERSION,
-        'securityCode': securityCode
-      };
-      return ovo.post('v1.0/api/auth/customer/unlock', data, this._aditionalHeader());
-  }
-  
+  }  
   
   pay(billerId, customerId, order_id, productId)
   {
